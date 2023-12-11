@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author Sysyphus42
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -109,17 +109,55 @@ public class Model extends Observable {
     public boolean tilt(Side side) {
         boolean changed;
         changed = false;
-
-        // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
-
+        board.setViewingPerspective(side);
+        for (int col = 0; col < board.size(); col += 1){
+            if (tile_col_move(col)){
+                changed = true;
+            }
+        }
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
     }
+
+    public boolean tile_col_move(int col) {
+        int rowTop = board.size() - 1;
+        int idx = -1; // the index of the tile to be added
+        boolean changed = false;
+        Tile addTile = null;
+
+        for (int row = board.size() - 1; row >= 0; row--) {
+            Tile tile = board.tile(col, row);
+            if (tile != null) {
+                if (idx == -1) {
+                    idx = row;
+                    addTile = tile;
+                    board.move(col, rowTop, addTile);
+                    changed = row != rowTop;
+                } else {
+                    if (tile.value() == addTile.value()) {
+                        board.move(col, rowTop, tile);
+                        score += board.tile(col, rowTop).value();
+                        rowTop--;
+                        idx = -1;
+                    } else {
+                        rowTop--;
+                        idx = rowTop;
+                        board.move(col, rowTop, tile);
+                        addTile = board.tile(col, rowTop);
+                    }
+                    changed = true;
+                }
+            }
+        }
+        return changed;
+    }
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
@@ -137,7 +175,14 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+
+        for (int row = 0; row < b.size(); row += 1){
+            for (int col = 0; col < b.size(); col += 1){
+                if (b.tile(col, row) == null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -147,7 +192,16 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+
+        for (int row = 0; row < b.size(); row += 1){
+            for (int col = 0; col < b.size(); col += 1){
+                if (b.tile(col, row) != null){
+                    if (b.tile(col, row).value() == MAX_PIECE) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -158,7 +212,26 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+
+        if (emptySpaceExists(b)){
+            return true;
+        }
+        // up
+        for (int row = 1; row < b.size(); row += 1){
+            for (int col = 0; col < b.size(); col += 1){
+                if (b.tile(col,row - 1).value() == b.tile(col, row).value()){
+                    return true;
+                }
+            }
+        }
+        // left
+        for (int row = 0; row < b.size(); row += 1){
+            for (int col = 1; col < b.size(); col += 1){
+                if (b.tile(col - 1,row).value() == b.tile(col, row).value()){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
