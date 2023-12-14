@@ -8,38 +8,41 @@ public class TestArrayDequeEC {
     public void randomizeTest() {
         ArrayDequeSolution<Integer> ads = new ArrayDequeSolution<>();
         StudentArrayDeque<Integer> sad = new StudentArrayDeque<>();
-        StringBuilder sb = new StringBuilder();
+        String message = "\n";
+        int n = 5000;
 
-        for (int i = 0; i < 100; i += 1) {
-            int num = StdRandom.uniform(1,100);
+        for (int i = 0; i < n; i++) {
+
             int selector = StdRandom.uniform(0,4);
             if (selector == 0) {
-
+                int num = StdRandom.uniform(0, 100);
                 ads.addFirst(num);
                 sad.addFirst(num);
-                sb.append("addFirst(").append(num).append(")\n");
+                message += "addFirst(" + num + ")\n";
 
             } else if (selector == 1) {
+                int num = StdRandom.uniform(0, 100);
                 ads.addLast(num);
                 sad.addLast(num);
-                sb.append("addLast(").append(num).append(")\n");
+                message += "addLast(" + num + ")\n";
 
-            } else if (selector == 2) {
+            }
+            if (sad.isEmpty()){
+                continue;
+            };
 
-                if (!ads.isEmpty()) {
-                    int expected = ads.removeLast();
-                    int actual = sad.removeLast();
-                    sb.append("removeLast()\n");
-                    assertEquals(String.valueOf(sb), expected, actual);
-                }
+            if (selector == 2) {
+                int expected = ads.removeFirst();
+                int actual = sad.removeFirst();
+                message += "removeFirst()\n";
+                assertEquals(message, expected, actual);
 
-            }else{
-                if (!ads.isEmpty()) {
-                    int expected = ads.removeFirst();
-                    int actual = sad.removeFirst();
-                    sb.append("removeFirst()\n");
-                    assertEquals(String.valueOf(sb), expected, actual);
-                }
+            } else if (selector == 3) {
+                int expected = ads.removeLast();
+                int actual = sad.removeLast();
+                message += "removeLast()\n";
+                assertEquals(message, expected, actual);
+
 
             }
         }
