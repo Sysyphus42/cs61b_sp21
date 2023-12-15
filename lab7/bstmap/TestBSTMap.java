@@ -3,6 +3,8 @@ package bstmap;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.util.Iterator;
+
 /** Tests by Brendan Hu, Spring 2015, revised for 2016 by Josh Hug */
 public class TestBSTMap {
 
@@ -86,5 +88,7 @@ public class TestBSTMap {
         b.put("hi", null);
         assertTrue(b.containsKey("hi"));
     }
+
+
 
 }
